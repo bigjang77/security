@@ -1,6 +1,7 @@
 package com.example.security.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,6 +10,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.security.model.Users;
 import com.example.security.repository.UserRepository;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 @Controller
@@ -56,6 +59,13 @@ public class IndexController {
     public String joinForm() {
         return "joinForm";
     }
+
+    @Secured("Admin")
+    @GetMapping("/info")
+    public @ResponseBody String info() {
+        return "개인정보";
+    }
+    
 
 
 }
