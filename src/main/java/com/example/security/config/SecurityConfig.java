@@ -1,5 +1,6 @@
 package com.example.security.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -10,10 +11,15 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+import com.example.security.config.oauth.PrincipalOauth2UserService;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
+
+        @Autowired
+        public PrincipalOauth2UserService principalOauth2UserService;
 
         //해당 메서드의 리턴되는 오브젝트를 IOC로 등록
         @Bean
@@ -49,7 +55,13 @@ public class SecurityConfig {
                                 .loginProcessingUrl("/login")
                                 .defaultSuccessUrl("/") // 로그인 성공 시 이동할 URL
                                 .permitAll()
-                        );
+                                )
+                        .oauth2Login((oauth2) -> oauth2
+                                .loginPage("/loginForm")
+                                .userInfoEndpoint(userinfo -> userinfo
+                                        .userService(principalOauth2UserService)
+                                        )
+                                );
 
         return http.build();
     }
